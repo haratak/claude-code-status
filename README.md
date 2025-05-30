@@ -23,3 +23,7 @@ swift build -c release
 ## 自動起動設定
 
 アプリをシステム環境設定のログイン項目に追加してください。
+
+## 技術仕様
+
+Claude Codeのステータス検出方法については[docs/STATUS_DETECTION.md](docs/STATUS_DETECTION.md)を参照してください。
