@@ -16,9 +16,24 @@ swift build -c release
 
 ## 実行
 
+### 推奨: アプリバンドルとして実行
+
 ```bash
+# ビルドしてアプリを起動
+./build_and_run.sh
+```
+
+### 手動実行（上級者向け）
+
+```bash
+# ビルドのみ
+swift build -c release
+
+# 実行ファイルを直接実行（メニューバーに表示されない場合があります）
 ./.build/release/ClaudeCodeStatus
 ```
+
+**注意**: メニューバーアプリとして正しく動作させるには、`.app`バンドルとして実行する必要があるため、`build_and_run.sh`スクリプトの使用を推奨します。
 
 ## テスト方法
 

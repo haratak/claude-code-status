@@ -1,32 +1,27 @@
-import SwiftUI
-import Combine
-
-@main
-struct ClaudeCodeStatusApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
-    var body: some Scene {
-        Settings {
-            EmptyView()
-        }
-    }
-}
+import Cocoa
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem?
     var statusMonitor: ClaudeStatusMonitor?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        print("Application launched")
         setupStatusBar()
         setupStatusMonitor()
+        print("Setup complete")
     }
     
     private func setupStatusBar() {
+        print("Setting up status bar...")
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         if let button = statusItem?.button {
+            print("Configuring status button...")
             button.image = NSImage(systemSymbolName: "circle.fill", accessibilityDescription: "Claude Code Status")
             button.image?.isTemplate = true
+            print("Status button configured")
+        } else {
+            print("ERROR: Could not get status button!")
         }
         
         let menu = NSMenu()

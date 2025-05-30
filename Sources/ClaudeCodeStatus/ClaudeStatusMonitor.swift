@@ -19,10 +19,13 @@ class ClaudeStatusMonitor {
     }
     
     func start() {
+        print("Starting status monitor...")
+        print("Monitoring log file at: \(claudeLogPath)")
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.checkStatus()
         }
         checkStatus()
+        print("Status monitor started")
     }
     
     func stop() {
@@ -33,6 +36,7 @@ class ClaudeStatusMonitor {
     private func checkStatus() {
         let newStatus = detectClaudeStatus()
         if newStatus != currentStatus {
+            print("Status changed from \(currentStatus) to \(newStatus)")
             currentStatus = newStatus
             onStatusChange?(newStatus)
         }

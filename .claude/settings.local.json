@@ -7,7 +7,12 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(mv:*)",
+      "Bash(./build_and_run.sh)",
+      "Bash(true)",
+      "Bash(rm:*)",
+      "Bash(./test_status.sh)"
     ],
     "deny": []
   }

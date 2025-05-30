@@ -16,7 +16,10 @@ let package = Package(
         .executableTarget(
             name: "ClaudeCodeStatus",
             dependencies: [],
-            path: "Sources/ClaudeCodeStatus"
+            path: "Sources/ClaudeCodeStatus",
+            resources: [
+                .process("Info.plist")
+            ]
         )
     ]
 )
