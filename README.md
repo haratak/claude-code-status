@@ -20,6 +20,63 @@ swift build -c release
 ./.build/release/ClaudeCodeStatus
 ```
 
+## テスト方法
+
+### 1. 開発モードでの実行
+
+```bash
+# デバッグビルドで実行
+swift run
+```
+
+### 2. ステータスのテスト
+
+#### アイドル状態のテスト
+```bash
+# Claude Codeを起動
+claude
+```
+
+#### 許可待ち状態のテスト
+```bash
+# ファイル編集などの許可が必要なコマンドを実行
+echo "test permission" > test.txt
+```
+
+#### 実行中状態のテスト
+```bash
+# 時間のかかるタスクを実行
+find / -name "*.txt" 2>/dev/null | head -100
+```
+
+### 3. ログファイルの確認
+
+```bash
+# ログファイルの内容を確認
+tail -f ~/.claude/logs/claude.log
+```
+
+### 4. 手動でステータスをテスト
+
+ログファイルに直接テキストを追加してステータス変化を確認：
+
+```bash
+# 許可待ち状態をシミュレート
+echo "Waiting for user permission" >> ~/.claude/logs/claude.log
+
+# 実行中状態をシミュレート
+echo "Executing task..." >> ~/.claude/logs/claude.log
+```
+
+### 5. テストスクリプトの実行
+
+付属のテストスクリプトで全ステータスを自動的にテスト：
+
+```bash
+# テストスクリプトを実行（各ステータスを5秒ずつ表示）
+./test_status.sh
+```
+
 ## 自動起動設定
 
 アプリをシステム環境設定のログイン項目に追加してください。
