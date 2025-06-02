@@ -43,6 +43,11 @@ class ClaudeStatusMonitor {
     }
     
     private func detectClaudeStatus() -> ClaudeStatus {
+        // First check if claude process is running
+        if !isClaudeProcessRunning() {
+            return .idle
+        }
+        
         guard FileManager.default.fileExists(atPath: claudeLogPath) else {
             return .idle
         }
@@ -50,25 +55,34 @@ class ClaudeStatusMonitor {
         do {
             let logContent = try String(contentsOfFile: claudeLogPath, encoding: .utf8)
             let lines = logContent.components(separatedBy: .newlines)
-            let recentLines = lines.suffix(50)
+            let recentLines = lines.suffix(10) // Only check last 10 lines for more recent status
             
+            // Check for idle status first (most recent wins)
+            for line in recentLines.reversed() {
+                if line.contains("idle") || 
+                   line.contains("completed") ||
+                   line.contains("Task completed") {
+                    return .idle
+                }
+            }
+            
+            // Then check for waiting permission
             for line in recentLines.reversed() {
                 if line.contains("Waiting for user permission") || 
                    line.contains("requires approval") ||
                    line.contains("confirm") {
                     return .waitingForPermission
                 }
-                
+            }
+            
+            // Finally check for executing
+            for line in recentLines.reversed() {
                 if line.contains("Executing") || 
                    line.contains("Running") ||
                    line.contains("Processing") ||
                    line.contains("Working on") {
                     return .executing
                 }
-            }
-            
-            if isClaudeProcessRunning() {
-                return .idle
             }
             
         } catch {

@@ -17,7 +17,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         if let button = statusItem?.button {
             print("Configuring status button...")
-            button.image = NSImage(systemSymbolName: "circle.fill", accessibilityDescription: "Claude Code Status")
+            button.image = NSImage(systemSymbolName: "circle", accessibilityDescription: "Claude Code Status")
             button.image?.isTemplate = true
             print("Status button configured")
         } else {
@@ -25,7 +25,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Claude Code Status", action: nil, keyEquivalent: ""))
+        
+        // ステータス表示用のメニューアイテム
+        let statusMenuItem = NSMenuItem(title: "Status: Idle", action: nil, keyEquivalent: "")
+        statusMenuItem.isEnabled = false
+        menu.addItem(statusMenuItem)
+        
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q"))
         statusItem?.menu = menu
@@ -34,22 +39,39 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusMonitor() {
         statusMonitor = ClaudeStatusMonitor()
         statusMonitor?.onStatusChange = { [weak self] status in
+            print("Status changed to: \(status)")
             DispatchQueue.main.async {
                 self?.updateStatusIcon(for: status)
             }
         }
         statusMonitor?.start()
+        
+        // 初期状態を設定
+        updateStatusIcon(for: .idle)
     }
     
     private func updateStatusIcon(for status: ClaudeStatus) {
         guard let button = statusItem?.button else { return }
+        
+        // メニューの最初のアイテムを更新
+        if let menu = statusItem?.menu,
+           let statusMenuItem = menu.items.first {
+            switch status {
+            case .idle:
+                statusMenuItem.title = "Status: Idle 🟢"
+            case .waitingForPermission:
+                statusMenuItem.title = "Status: Waiting for permission 🟡"
+            case .executing:
+                statusMenuItem.title = "Status: Executing 🔴"
+            }
+        }
         
         switch status {
         case .idle:
             button.image = NSImage(systemSymbolName: "circle", accessibilityDescription: "Idle")
             button.toolTip = "Claude Code: Idle"
         case .waitingForPermission:
-            button.image = NSImage(systemSymbolName: "exclamationmark.circle", accessibilityDescription: "Waiting for permission")
+            button.image = NSImage(systemSymbolName: "exclamationmark.circle.fill", accessibilityDescription: "Waiting for permission")
             button.toolTip = "Claude Code: Waiting for permission"
         case .executing:
             button.image = NSImage(systemSymbolName: "circle.fill", accessibilityDescription: "Executing")
